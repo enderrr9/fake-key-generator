@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windows 11 Key Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000d1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .win-wrap {
+      background: #001020;
+      border: 1px solid rgba(0,120,212,0.25);
+      border-radius: 14px;
+      padding: 2.5rem 2.5rem 2rem;
+      color: #cde4f7;
+      width: 100%;
+      max-width: 560px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .win-wrap::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 500px; height: 200px;
+      background: radial-gradient(ellipse, rgba(0,120,212,0.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .win-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .win-logo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      width: 22px;
+      height: 22px;
+    }
+
+    .win-logo-grid span { border-radius: 2px; background: #0078D4; }
+    .win-logo-grid span:nth-child(2) { background: #00B4F0; }
+    .win-logo-grid span:nth-child(3) { background: #35B600; }
+    .win-logo-grid span:nth-child(4) { background: #FFB900; }
+
+    .win-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #e0f0ff;
+    }
+
+    .win-subtitle {
+      font-size: 12px;
+      color: rgba(180,210,240,0.5);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 1.8rem;
+    }
+
+    .key-display {
+      background: #0d2040;
+      border: 1px solid rgba(0,120,212,0.35);
+      border-radius: 8px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 0 24px rgba(0,120,212,0.18);
+    }
+
+    .key-string {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: #58c4f5;
+      flex: 1;
+      word-break: break-all;
+    }
+
+    .key-string.empty { color: rgba(88,196,245,0.2); }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid rgba(0,120,212,0.35);
+      color: #58c4f5;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-left: 16px;
+    }
+
+    .gen-btn {
+      width: 100%;
+      padding: 13px;
+      background: #0078D4;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .webhook-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+      color: #58c4f5;
+      font-size: 13px;
+    }
+
+    .history-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: rgba(180,210,240,0.35);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .history-list {
+      list-style: none;
+    }
+
+    .history-list li {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: rgba(88,196,245,0.45);
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(0,120,212,0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="win-wrap">
+    <div class="win-logo">
+      <div class="win-logo-grid">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <span class="win-title">Windows 11</span>
+    </div>
+
+    <div class="win-subtitle">Product key generator · XXXXX-XXXXX-XXXXX-XXXXX-XXXXX</div>
+
+    <div class="key-display">
+      <span class="key-string empty" id="keyOut">Click generate to create a key</span>
+      <button class="copy-btn" onclick="copyKey()">Copy</button>
+    </div>
+
+    <label class="webhook-toggle">
+      <input type="checkbox" id="webhookToggle" />
+      Webhook send
+    </label>
+
+    <button class="gen-btn" onclick="generateKey()">⚡ Generate Key</button>
+
+    <div class="history-label">Recent keys</div>
+    <ul class="history-list" id="historyList"></ul>
+  </div>
+
+  <script>
+    const CHARS = 'BCDFGHJKMPQRTVWXY2346789';
+
+    // 🔴 paste your webhook here (DON'T share it publicly)
+    const WEBHOOK_URL = "PASTE_YOUR_WEBHOOK_HERE";
+
+    function randomSegment(len) {
+      let s = '';
+      for (let i = 0; i < len; i++) {
+        s += CHARS[Math.floor(Math.random() * CHARS.length)];
+      }
+      return s;
+    }
+
+    function makeKey() {
+      return [5,5,5,5,5].map(() => randomSegment(5)).join('-');
+    }
+
+    let history = [];
+
+    function generateKey() {
+      const key = makeKey();
+
+      const out = document.getElementById('keyOut');
+      out.textContent = key;
+      out.classList.remove('empty');
+
+      history.unshift(key);
+      if (history.length > 5) history.pop();
+      renderHistory();
+
+      const toggle = document.getElementById('webhookToggle');
+
+      if (toggle.checked && WEBHOOK_URL && WEBHOOK_URL !== "https://discord.com/api/webhooks/1494366156662902987/4YPVL-vcEATKpgr8GV0Ym5EHq12UflMUm3bnX4ci5uS5c2ISt1xCdHb3DzW9l3B3E_I6") {
+        fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `New generated key: ${key}`
+          })
+        }).catch(console.error);
+      }
+    }
+
+    function renderHistory() {
+      document.getElementById('historyList').innerHTML =
+        history.map(k => `<li>${k}</li>`).join('');
+    }
+
+    function copyKey() {
+      const key = document.getElementById('keyOut').textContent;
+      if (!key.includes('-')) return;
+
+      navigator.clipboard.writeText(key);
+    }
+  </script>
+
+</body>
+</html>
