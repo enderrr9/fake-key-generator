@@ -109,8 +109,14 @@
       font-weight: 600;
       letter-spacing: 1px;
       cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
       margin-left: 16px;
+      white-space: nowrap;
     }
+
+    .copy-btn:hover { background: rgba(0,120,212,0.15); border-color: #0078D4; }
+    .copy-btn:active { background: rgba(0,120,212,0.28); }
+    .copy-btn.copied { color: #6ee68a; border-color: rgba(110,230,138,0.4); }
 
     .gen-btn {
       width: 100%;
@@ -124,18 +130,13 @@
       font-weight: 600;
       letter-spacing: 2px;
       cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
       text-transform: uppercase;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .webhook-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 1.5rem;
-      color: #58c4f5;
-      font-size: 13px;
-    }
+    .gen-btn:hover { background: #006bbe; }
+    .gen-btn:active { background: #005fa3; transform: scale(0.99); }
 
     .history-label {
       font-size: 11px;
@@ -143,6 +144,18 @@
       color: rgba(180,210,240,0.35);
       text-transform: uppercase;
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .count-badge {
+      background: rgba(0,120,212,0.18);
+      color: #58c4f5;
+      border-radius: 4px;
+      font-size: 12px;
+      padding: 2px 8px;
+      font-family: 'Share Tech Mono', monospace;
     }
 
     .history-list {
@@ -155,6 +168,18 @@
       color: rgba(88,196,245,0.45);
       padding: 5px 0;
       border-bottom: 1px solid rgba(0,120,212,0.08);
+      letter-spacing: 1.5px;
+    }
+
+    .history-list li:last-child { border-bottom: none; }
+
+    .notice {
+      margin-top: 1.5rem;
+      font-size: 11px;
+      color: rgba(180,210,240,0.28);
+      text-align: center;
+      letter-spacing: 0.5px;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -168,29 +193,29 @@
       <span class="win-title">Windows 11</span>
     </div>
 
-    <div class="win-subtitle">Product key generator · XXXXX-XXXXX-XXXXX-XXXXX-XXXXX</div>
+    <div class="win-subtitle">Product key generator &nbsp;·&nbsp; format: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX</div>
 
     <div class="key-display">
       <span class="key-string empty" id="keyOut">Click generate to create a key</span>
-      <button class="copy-btn" onclick="copyKey()">Copy</button>
+      <button class="copy-btn" id="copyBtn" onclick="copyKey()">Copy</button>
     </div>
-
-    <label class="webhook-toggle">
-      <input type="checkbox" id="webhookToggle" />
-      Webhook send
-    </label>
 
     <button class="gen-btn" onclick="generateKey()">⚡ Generate Key</button>
 
-    <div class="history-label">Recent keys</div>
+    <div class="history-label">
+      Recent keys
+      <span class="count-badge" id="countBadge">0</span>
+    </div>
     <ul class="history-list" id="historyList"></ul>
+
+    <div class="notice">
+      ⚠ These are randomly generated placeholder strings — they will not activate Windows.<br>
+      For genuine licenses, visit <a href="https://microsoft.com" style="color: rgba(88,196,245,0.5);">microsoft.com</a>.
+    </div>
   </div>
 
   <script>
     const CHARS = 'BCDFGHJKMPQRTVWXY2346789';
-
-    // 🔴 paste your webhook here (DON'T share it publicly)
-    const WEBHOOK_URL = "PASTE_YOUR_WEBHOOK_HERE";
 
     function randomSegment(len) {
       let s = '';
@@ -201,45 +226,44 @@
     }
 
     function makeKey() {
-      return [5,5,5,5,5].map(() => randomSegment(5)).join('-');
+      return [5, 5, 5, 5, 5].map(l => randomSegment(l)).join('-');
     }
 
     let history = [];
 
     function generateKey() {
       const key = makeKey();
-
       const out = document.getElementById('keyOut');
       out.textContent = key;
       out.classList.remove('empty');
 
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+
       history.unshift(key);
       if (history.length > 5) history.pop();
       renderHistory();
-
-      const toggle = document.getElementById('webhookToggle');
-
-      if (toggle.checked && WEBHOOK_URL && WEBHOOK_URL !== "https://discord.com/api/webhooks/1494366156662902987/4YPVL-vcEATKpgr8GV0Ym5EHq12UflMUm3bnX4ci5uS5c2ISt1xCdHb3DzW9l3B3E_I6") {
-        fetch(WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            content: `New generated key: ${key}`
-          })
-        }).catch(console.error);
-      }
     }
 
     function renderHistory() {
-      document.getElementById('historyList').innerHTML =
-        history.map(k => `<li>${k}</li>`).join('');
+      const ul = document.getElementById('historyList');
+      document.getElementById('countBadge').textContent = history.length;
+      ul.innerHTML = history.map(k => `<li>${k}</li>`).join('');
     }
 
     function copyKey() {
       const key = document.getElementById('keyOut').textContent;
-      if (!key.includes('-')) return;
-
-      navigator.clipboard.writeText(key);
+      if (!key || key.startsWith('Click')) return;
+      navigator.clipboard.writeText(key).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
     }
   </script>
 
